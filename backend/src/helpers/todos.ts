@@ -14,11 +14,7 @@ const newAttachUtil = new AttachmentUtils();
 const getTodosForUser = async (userId: string) => {
   return await newTodos.getTodos(userId);
 };
-const createTodo = async (
-  newTodo: TodoItem,
-  userId: string,
-  attachmentUrl: string
-) => {
+const createTodo = async (newTodo: TodoItem, userId: string) => {
   const newItem: TodoItem = {
     todoId: uuidv4(),
     userId,
@@ -26,7 +22,6 @@ const createTodo = async (
     dueDate: newTodo.dueDate,
     createdAt: new Date().toISOString(),
     done: false,
-    attachmentUrl,
   };
   return await newTodos.createTodos(newItem);
 };
@@ -40,11 +35,15 @@ const updateTodo = async (
 ) => {
   return await newTodos.updateTodo(newTodo, todoId, userId);
 };
-const generateUploadUrl = async (imageId: string) => {
-  const attach = await newAttachUtil.getUploadUrl(imageId);
+const generateUploadUrl = async (todoId: string) => {
+  const attach = await newAttachUtil.getUploadUrl(todoId);
   return {
     attach,
   };
+};
+
+const updateTodoImage = async (todoId: string, userId: string) => {
+  return await newTodos.updateTodoImage(todoId, userId);
 };
 
 const todoExists = async (todoId: string, userId: string) => {
@@ -57,5 +56,6 @@ export {
   deleteTodo,
   updateTodo,
   generateUploadUrl,
+  updateTodoImage,
   todoExists,
 };

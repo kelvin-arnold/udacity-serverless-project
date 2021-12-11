@@ -17,13 +17,13 @@ class AttachmentUtils {
     private readonly urlExpiration: string = process.env.SIGNED_URL_EXPIRATION
   ) {}
 
-  async getUploadUrl(imageId: string) {
+  async getUploadUrl(todoId: string) {
     logger.info("Upload url", {
-      imageId,
+      todoId,
     });
     return s3.getSignedUrl("putObject", {
       Bucket: this.bucketName,
-      Key: imageId,
+      Key: todoId,
       Expires: parseInt(this.urlExpiration),
     });
   }

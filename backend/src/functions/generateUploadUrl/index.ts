@@ -15,7 +15,7 @@ export default {
   iamRoleStatements: [
     {
       Effect: "Allow",
-      Action: ["dynamodb:GetItem"],
+      Action: ["dynamodb:GetItem", "dynamodb:Update*"],
       Resource:
         "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}",
     },

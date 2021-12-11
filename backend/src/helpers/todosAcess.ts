@@ -13,6 +13,7 @@ class Todos {
   constructor(
     private readonly db: DocumentClient = new xray_aws.DynamoDB.DocumentClient(),
     private readonly table: string = process.env.TODOS_TABLE,
+    private readonly bucket = process.env.ATTACHMENT_S3_BUCKET,
     private readonly userIdIndex: string = process.env.TODOS_CREATED_AT_INDEX
   ) {}
 
@@ -109,6 +110,32 @@ class Todos {
       })
       .promise();
     return !!result.Item;
+  }
+  async updateTodoImage(todoId: string, userId: string): Promise<string> {
+    logger.info("Update todo image: ", {
+      todoId,
+      userId,
+    });
+    const url = `https://${this.bucket}.s3.amazonaws.com/${todoId}`;
+    await this.db
+      .update({
+        TableName: this.table,
+        Key: {
+          userId: userId,
+          todoId: todoId,
+        },
+        ExpressionAttributeNames: {
+          "#todo_attachmentUrl": "attachmentUrl",
+        },
+        ExpressionAttributeValues: {
+          ":attachmentUrl": url,
+        },
+        UpdateExpression: "SET #todo_attachmentUrl = :attachmentUrl",
+        ReturnValues: "ALL_NEW",
+      })
+      .promise();
+
+    return url;
   }
 }
 
